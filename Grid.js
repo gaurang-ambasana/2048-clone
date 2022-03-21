@@ -1,3 +1,4 @@
+import Cell from "./Cell.js";
 import { CELL_SIZE, GRID_SIZE, CELL_GAP } from "./constants.js";
 
 export default class Grid {
@@ -14,18 +15,6 @@ export default class Grid {
 
       return cell;
     });
-  }
-}
-
-class Cell {
-  #cellElement;
-  #x;
-  #y;
-
-  constructor(cellElement, x, y) {
-    this.#cellElement = cellElement;
-    this.#x = x;
-    this.#y = y;
   }
 }
 
