@@ -16,6 +16,15 @@ export default class Grid {
       return cell;
     });
   }
+
+  get #emptyCells() {
+    return this.#cells.filter((cell) => !Boolean(cell.tile));
+  }
+
+  randomEmptyCell() {
+    const randomIndex = Math.floor(Math.random() * this.#emptyCells.length);
+    return this.#emptyCells[randomIndex];
+  }
 }
 
 const createSingleCell = () => {
