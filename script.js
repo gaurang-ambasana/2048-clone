@@ -15,9 +15,22 @@ function moveUp() {
   slideTiles(cellsByColumn);
 }
 
-const moveDown = () => console.log("Down");
-const moveLeft = () => console.log("Left");
-const moveRight = () => console.log("Right");
+function moveDown() {
+  const { cellsByColumn } = grid;
+  const inversedColumns = cellsByColumn.map((column) => [...column].reverse());
+  slideTiles(inversedColumns);
+}
+
+function moveLeft() {
+  const { cellsByRow } = grid;
+  slideTiles(cellsByRow);
+}
+
+function moveRight() {
+  const { cellsByRow } = grid;
+  const inversedRows = cellsByRow.map((row) => [...row].reverse());
+  slideTiles(inversedRows);
+}
 
 function setupInput() {
   window.addEventListener("keydown", handleInput, {
