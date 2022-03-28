@@ -38,25 +38,25 @@ function setupInput() {
   });
 }
 
-function handleInput(event) {
+async function handleInput(event) {
   switch (event.key) {
     case "ArrowUp": {
-      moveUp();
+      await moveUp();
       break;
     }
 
     case "ArrowDown": {
-      moveDown();
+      await moveDown();
       break;
     }
 
     case "ArrowLeft": {
-      moveLeft();
+      await moveLeft();
       break;
     }
 
     case "ArrowRight": {
-      moveRight();
+      await moveRight();
       break;
     }
 
@@ -67,6 +67,9 @@ function handleInput(event) {
   }
 
   grid.cells.forEach((cell) => cell.mergeTiles());
+  grid.randomEmptyCell().tile = createNewTile();
 
   setupInput();
 }
+
+const createNewTile = () => new Tile(gameBoard);
