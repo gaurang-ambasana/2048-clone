@@ -26,6 +26,13 @@ export default class Grid {
     }, []);
   }
 
+  get cellsByRow() {
+    return this.cellsByColumn.reduce(
+      ($, row) => row.map((_, i) => [...($[i] || []), row[i]]),
+      []
+    );
+  }
+
   get #emptyCells() {
     return this.#cells.filter((cell) => !Boolean(cell.tile));
   }
