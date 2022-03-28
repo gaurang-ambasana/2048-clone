@@ -10,6 +10,7 @@ export default class Cell {
     this.#x = x;
     this.#y = y;
     this.#tile = null;
+    this.#mergeTile = null;
   }
 
   get x() {
@@ -47,5 +48,12 @@ export default class Cell {
       this.tile === null ||
       (this.mergeTile == null && this.#tile.value === tile.value)
     );
+  }
+
+  mergeTiles() {
+    if ([this.mergeTile, this.tile].includes(null)) return;
+    this.tile.value = this.tile.value + this.mergeTile.value;
+    this.mergeTile.remove();
+    this.mergeTile = null;
   }
 }
