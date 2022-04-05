@@ -5,6 +5,11 @@
   font: Arial;
 }
 
+html,
+body {
+  overscroll-behavior-y: contain;
+}
+
 body {
   font-size: 7.5vmin;
   background-color: #333;
