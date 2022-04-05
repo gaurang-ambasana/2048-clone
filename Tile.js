@@ -15,20 +15,18 @@ export default class Tile {
     return this.#value;
   }
 
-  set value(val) {
-    this.#value = val;
-    this.#tileElement.textContent = val;
-
-    const power = Math.log2(val);
-    const backgroudLightness = 100 - power * 9;
-
+  set value(v) {
+    this.#value = v;
+    this.#tileElement.textContent = v;
+    const power = Math.log2(v);
+    const backgroundLightness = 100 - power * 9;
     this.#tileElement.style.setProperty(
       "--background-lightness",
-      `${backgroudLightness}%`
+      `${backgroundLightness}%`
     );
     this.#tileElement.style.setProperty(
       "--text-lightness",
-      `${backgroudLightness <= 50 ? 90 : 10}%`
+      `${backgroundLightness <= 50 ? 90 : 10}%`
     );
   }
 
@@ -46,11 +44,15 @@ export default class Tile {
     this.#tileElement.remove();
   }
 
-  waitForTransition() {
-    return new Promise((resolve) =>
-      this.#tileElement.addEventListener("transitionend", resolve, {
-        once: true,
-      })
-    );
+  waitForTransition(animation = false) {
+    return new Promise((resolve) => {
+      this.#tileElement.addEventListener(
+        animation ? "animationend" : "transitionend",
+        resolve,
+        {
+          once: true,
+        }
+      );
+    });
   }
 }
