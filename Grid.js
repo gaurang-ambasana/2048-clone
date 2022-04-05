@@ -1,5 +1,4 @@
-import Cell from "./Cell.js";
-import { CELL_SIZE, GRID_SIZE, CELL_GAP } from "./constants.js";
+import { CELL_GAP, CELL_SIZE, GRID_SIZE } from "./constants.js";
 
 export default class Grid {
   #cells;
@@ -8,12 +7,12 @@ export default class Grid {
     gridElement.style.setProperty("--grid-size", GRID_SIZE);
     gridElement.style.setProperty("--cell-size", `${CELL_SIZE}vmin`);
     gridElement.style.setProperty("--cell-gap", `${CELL_GAP}vmin`);
-
-    this.#cells = createCellElement(gridElement).map((cellEle, idx) => {
-      const [x, y] = [idx % GRID_SIZE, Math.floor(idx / GRID_SIZE)];
-      const cell = new Cell(cellEle, x, y);
-
-      return cell;
+    this.#cells = createCellElements(gridElement).map((cellElement, index) => {
+      return new Cell(
+        cellElement,
+        index % GRID_SIZE,
+        Math.floor(index / GRID_SIZE)
+      );
     });
   }
 
@@ -21,24 +20,24 @@ export default class Grid {
     return this.#cells;
   }
 
-  get cellsByColumn() {
+  get cellsByRow() {
     return this.#cells.reduce((cellGrid, cell) => {
-      cellGrid[cell.x] = cellGrid[cell.x] || [];
-      cellGrid[cell.x][cell.y] = cell;
-
+      cellGrid[cell.y] = cellGrid[cell.y] || [];
+      cellGrid[cell.y][cell.x] = cell;
       return cellGrid;
     }, []);
   }
 
-  get cellsByRow() {
-    return this.cellsByColumn.reduce(
-      ($, row) => row.map((_, i) => [...($[i] || []), row[i]]),
-      []
-    );
+  get cellsByColumn() {
+    return this.#cells.reduce((cellGrid, cell) => {
+      cellGrid[cell.x] = cellGrid[cell.x] || [];
+      cellGrid[cell.x][cell.y] = cell;
+      return cellGrid;
+    }, []);
   }
 
   get #emptyCells() {
-    return this.#cells.filter((cell) => !Boolean(cell.tile));
+    return this.#cells.filter((cell) => cell.tile == null);
   }
 
   randomEmptyCell() {
@@ -47,21 +46,71 @@ export default class Grid {
   }
 }
 
-const createSingleCell = () => {
-  const cell = document.createElement("div");
-  cell.classList.add("cell");
+class Cell {
+  #cellElement;
+  #x;
+  #y;
+  #tile;
+  #mergeTile;
 
-  return cell;
-};
+  constructor(cellElement, x, y) {
+    this.#cellElement = cellElement;
+    this.#x = x;
+    this.#y = y;
+  }
 
-const createCellElement = (gridElement) => {
+  get x() {
+    return this.#x;
+  }
+
+  get y() {
+    return this.#y;
+  }
+
+  get tile() {
+    return this.#tile;
+  }
+
+  set tile(value) {
+    this.#tile = value;
+    if (value == null) return;
+    this.#tile.x = this.#x;
+    this.#tile.y = this.#y;
+  }
+
+  get mergeTile() {
+    return this.#mergeTile;
+  }
+
+  set mergeTile(value) {
+    this.#mergeTile = value;
+    if (value == null) return;
+    this.#mergeTile.x = this.#x;
+    this.#mergeTile.y = this.#y;
+  }
+
+  canAccept(tile) {
+    return (
+      this.tile == null ||
+      (this.mergeTile == null && this.tile.value === tile.value)
+    );
+  }
+
+  mergeTiles() {
+    if (this.tile == null || this.mergeTile == null) return;
+    this.tile.value = this.tile.value + this.mergeTile.value;
+    this.mergeTile.remove();
+    this.mergeTile = null;
+  }
+}
+
+function createCellElements(gridElement) {
   const cells = [];
-
   for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-    const cell = createSingleCell();
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
     cells.push(cell);
     gridElement.append(cell);
   }
-
   return cells;
-};
+}
